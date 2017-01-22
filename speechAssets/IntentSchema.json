@@ -1,0 +1,28 @@
+{
+  "intents": [
+    {
+      "intent": "LookupCityIntent",
+            "slots": [
+                {
+                    "name": "One",
+                    "type": "AMAZON.NUMBER"
+                },
+                {
+                    "name": "Two",
+                    "type": "AMAZON.NUMBER"
+                },
+                {
+                    "name": "Three",
+                    "type": "AMAZON.NUMBER"
+                },
+                {
+                    "name": "Four",
+                    "type": "AMAZON.NUMBER"
+                }
+            ]
+    },
+    {
+      "intent": "AMAZON.HelpIntent"
+    }
+  ]
+}

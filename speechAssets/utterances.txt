@@ -1,0 +1,7 @@
+LookupCityIntent What city is {One} dot {Two} dot {Three} dot {Four} in
+LookupCityIntent Where is {One} dot {Two} dot {Three} dot {Four} located
+LookupCityIntent Lookup {One} dot {Two} dot {Three} dot {Four}
+LookupCityIntent Where is {One} dot {Two} dot {Three} dot {Four}
+LookupCityIntent Lookup address {One} dot {Two} dot {Three} dot {Four}
+LookupCityIntent Find i p {One} dot {Two} dot {Three} dot {Four}
+LookupCityIntent GeoLocate {One} dot {Two} dot {Three} dot {Four}
