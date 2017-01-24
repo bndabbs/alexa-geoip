@@ -86,6 +86,7 @@ def handle_session_end_request():
 
 def error_private_address(ip):
     card_title = ip
+    session_attributes = {}
     speech_output = "Sorry, you have requested an address in a private network. " \
                     "Please try again with a public address."
     reprompt_text = "Please try again with a public address."
