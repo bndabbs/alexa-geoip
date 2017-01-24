@@ -100,8 +100,23 @@ def LookupCity(ip):
     session_attributes = {}
     try:
         result = reader.city(ip)
+
+        # Give unknown values a more readable name
+        if result.city.name is None:
+            city = "Unknown city"
+        else:
+            city = result.city.name
+        if result.subdivisions.most_specific.name is None:
+            state = "Unknown state"
+        else:
+            state = result.subdivisions.most_specific.name
+        if result.country.name is None:
+            country = "Unknown country"
+        else:
+            country = result.country.name
+
         should_end_session = True
-        speech_output = "That address is in " + result.city.name + ", " + result.subdivisions.most_specific.name + ", " + result.country.name
+        speech_output = ("That address is in %s, %s, %s" % (city, state, country))
         reprompt_text = None
     except geoip2.errors.AddressNotFoundError:
         should_end_session = False
@@ -151,10 +166,9 @@ def on_intent(intent_request, session):
         intent_slots = intent_request['intent']['slots']
         ip = ("%s.%s.%s.%s" % (intent_slots['One']['value'], intent_slots['Two']['value'], intent_slots['Three']['value'], intent_slots['Four']['value']))
         ip_test = ipaddress.IPv4Address(ip)
-        private_ip = ip_test.is_private
-        if private_ip == False:
+        if ip_test.is_private == False:
             return LookupCity(ip)
-        elif private_ip == True:
+        elif ip_test.is_private == True:
             return error_private_address(ip)
     if intent_name == "AMAZON.HelpIntent":
         return handle_help_request()
