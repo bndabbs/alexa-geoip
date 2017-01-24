@@ -80,19 +80,18 @@ def handle_help_request():
 def handle_session_end_request():
     card_title = "Session Ended"
     speech_output = "Goodbye!"
-    # Setting this to true ends the session and exits the skill.
     should_end_session = True
     return build_response({}, build_speechlet_response(
         card_title, speech_output, None, should_end_session))
 
-def error_private_address():
-    card_title = "Private Address"
+def error_private_address(ip):
+    card_title = ip
     speech_output = "Sorry, you have requested an address in a private network. " \
                     "Please try again with a public address."
-    # Setting this to true ends the session and exits the skill.
+    reprompt_text = "Please try again with a public address."
     should_end_session = False
-    return build_response({}, build_speechlet_response(
-        card_title, speech_output, None, should_end_session))
+    return build_response(session_attributes, build_speechlet_response(
+        card_title, speech_output, reprompt_text, should_end_session))
 
 def LookupCity(ip):
     reader = geoip2.database.Reader('./GeoLite2-City.mmdb')
@@ -155,11 +154,11 @@ def on_intent(intent_request, session):
         if private_ip == False:
             return LookupCity(ip)
         elif private_ip == True:
-            return error_private_address()
+            return error_private_address(ip)
     if intent_name == "AMAZON.HelpIntent":
         return handle_help_request()
     if intent_name == "AMAZON.StopIntent":
-        return on_session_ended()
+        return handle_session_end_request()
     else:
         raise ValueError("Invalid intent")
 
