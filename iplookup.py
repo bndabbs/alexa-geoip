@@ -84,7 +84,7 @@ def handle_session_end_request():
     return build_response({}, build_speechlet_response(
         card_title, speech_output, None, should_end_session))
 
-def error_private_address(ip):
+def handle_private_address(ip):
     card_title = ip
     session_attributes = {}
     speech_output = "Sorry, you have requested an address in a private network. " \
@@ -94,7 +94,18 @@ def error_private_address(ip):
     return build_response(session_attributes, build_speechlet_response(
         card_title, speech_output, reprompt_text, should_end_session))
 
-def LookupCity(ip):
+def handle_invalid_address():
+    card_title = "Invalid Request"
+    session_attributes = {}
+    speech_output = "Sorry, I don't understand that address. " \
+                    "Please try again."
+    reprompt_text = "Sorry, I don't understand that  address." \
+                    "Please try again."
+    should_end_session = False
+    return build_response(session_attributes, build_speechlet_response(
+        card_title, speech_output, reprompt_text, should_end_session))
+
+def lookup_city(ip):
     reader = geoip2.database.Reader('./GeoLite2-City.mmdb')
     card_title = ip
     session_attributes = {}
@@ -164,12 +175,20 @@ def on_intent(intent_request, session):
     # Dispatch to your skill's intent handlers
     if intent_name == "LookupCityIntent":
         intent_slots = intent_request['intent']['slots']
-        ip = ("%s.%s.%s.%s" % (intent_slots['One']['value'], intent_slots['Two']['value'], intent_slots['Three']['value'], intent_slots['Four']['value']))
-        ip_test = ipaddress.IPv4Address(ip)
+        # Make sure we can parse each slot
+        try:
+            ip = ("%s.%s.%s.%s" % (intent_slots['One']['value'], intent_slots['Two']['value'], intent_slots['Three']['value'], intent_slots['Four']['value']))
+        except KeyError:
+            return handle_invalid_address()
+        # Make sure the address is valid and not private
+        try:
+            ip_test = ipaddress.IPv4Address(ip)
+        except ipaddress.AddressValueError:
+            return handle_invalid_address()
         if ip_test.is_private == False:
-            return LookupCity(ip)
+            return lookup_city(ip)
         elif ip_test.is_private == True:
-            return error_private_address(ip)
+            return handle_private_address(ip)
     if intent_name == "AMAZON.HelpIntent":
         return handle_help_request()
     if intent_name == "AMAZON.StopIntent":
