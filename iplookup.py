@@ -56,8 +56,23 @@ def get_welcome_response():
     # If the user either does not reply to the welcome message or says something
     # that is not understood, they will be prompted again with this text.
     reprompt_text = "Please say a command. You can say things like" \
-                    "where is eight dot eight dot eight dot eight located " \
-                    "or lookup four dot four dot four dot four."
+                    "where is eight. dot eight. dot eight. dot eight. located. " \
+                    "or, lookup four. dot four. dot four. dot four."
+    should_end_session = False
+    return build_response(session_attributes, build_speechlet_response(
+        card_title, speech_output, reprompt_text, should_end_session))
+
+def handle_help_request():
+    session_attributes = {}
+    card_title = "Help"
+    speech_output = "You can say things like: " \
+                    "where is eight. dot eight. dot eight. dot eight. located. " \
+                    "or, lookup four. dot four. dot four. dot four."
+    # If the user either does not reply to the welcome message or says something
+    # that is not understood, they will be prompted again with this text.
+    reprompt_text = "Please say a command. You can say things like" \
+                    "where is eight. dot eight. dot eight. dot eight. located. " \
+                    "or, lookup four. dot four. dot four. dot four."
     should_end_session = False
     return build_response(session_attributes, build_speechlet_response(
         card_title, speech_output, reprompt_text, should_end_session))
