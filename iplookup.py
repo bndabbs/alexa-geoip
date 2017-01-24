@@ -80,7 +80,7 @@ def LookupCity(intent, ip):
     result = reader.city(ip)
     card_title = intent['name']
     session_attributes = {}
-    should_end_session = False
+    should_end_session = True
     speech_output = "That address is in " + result.city.name + ", " + result.subdivisions.most_specific.name + ", " + result.country.name
     reprompt_text = None
     return build_response(session_attributes, build_speechlet_response(
