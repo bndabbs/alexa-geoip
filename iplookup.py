@@ -146,7 +146,7 @@ def on_intent(intent_request, session):
     intent_name = intent_request['intent']['name']
 
     # Dispatch to your skill's intent handlers
-    if intent_name == "LookupCity":
+    if intent_name == "LookupCityIntent":
         intent_slots = intent_request['intent']['slots']
         ip = ("%s.%s.%s.%s" % (intent_slots['One']['value'], intent_slots['Two']['value'], intent_slots['Three']['value'], intent_slots['Four']['value']))
         ip_test = ipaddress.IPv4Address(ip)
