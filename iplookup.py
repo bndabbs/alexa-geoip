@@ -147,7 +147,7 @@ def on_intent(intent_request, session):
     intent_name = intent_request['intent']['name']
 
     # Dispatch to your skill's intent handlers
-    if intent_name == "LookupCity"
+    if intent_name == "LookupCity":
         intent_slots = intent_request['intent']['slots']
         ip = ("%s.%s.%s.%s" % (intent_slots['One']['value'], intent_slots['Two']['value'], intent_slots['Three']['value'], intent_slots['Four']['value']))
         ip_test = ipaddress.IPv4Address(ip)
@@ -156,9 +156,9 @@ def on_intent(intent_request, session):
             return LookupCity(ip)
         elif private_ip == True:
             return error_private_address()
-    if intent_name == "AMAZON.HelpIntent"
+    if intent_name == "AMAZON.HelpIntent":
         return handle_help_request()
-    if intent_name == "AMAZON.StopIntent"
+    if intent_name == "AMAZON.StopIntent":
         return on_session_ended()
     else:
         raise ValueError("Invalid intent")
