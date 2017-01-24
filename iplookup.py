@@ -19,8 +19,8 @@ def build_speechlet_response(title, output, reprompt_text, should_end_session):
         },
         'card': {
             'type': 'Simple',
-            'title': "SessionSpeechlet - " + title,
-            'content': "SessionSpeechlet - " + output
+            'title': "IP Geo Lookup - " + title,
+            'content': output
         },
         'reprompt': {
             'outputSpeech': {
@@ -49,14 +49,18 @@ def get_welcome_response():
 
     session_attributes = {}
     card_title = "Welcome"
-    speech_output = "Welcome to the IP GeoLocator service"
+    speech_output = "Welcome to the IP GeoLocator service " \
+                    "You can say things like " \
+                    "where is eight dot eight dot eight dot eight located " \
+                    "or lookup four dot four dot four dot four."
     # If the user either does not reply to the welcome message or says something
     # that is not understood, they will be prompted again with this text.
-    reprompt_text = "Please try again"
+    reprompt_text = "Please say a command. You can say things like" \
+                    "where is eight dot eight dot eight dot eight located " \
+                    "or lookup four dot four dot four dot four."
     should_end_session = False
     return build_response(session_attributes, build_speechlet_response(
         card_title, speech_output, reprompt_text, should_end_session))
-
 
 def handle_session_end_request():
     card_title = "Session Ended"
@@ -71,18 +75,30 @@ def error_private_address():
     speech_output = "Sorry, you have requested an address in a private network. " \
                     "Please try again with a public address."
     # Setting this to true ends the session and exits the skill.
-    should_end_session = True
+    should_end_session = False
     return build_response({}, build_speechlet_response(
         card_title, speech_output, None, should_end_session))
 
 def LookupCity(intent, ip):
     reader = geoip2.database.Reader('./GeoLite2-City.mmdb')
-    result = reader.city(ip)
-    card_title = intent['name']
+    card_title = ip
     session_attributes = {}
-    should_end_session = True
-    speech_output = "That address is in " + result.city.name + ", " + result.subdivisions.most_specific.name + ", " + result.country.name
-    reprompt_text = None
+    try:
+        result = reader.city(ip)
+        should_end_session = True
+        speech_output = "That address is in " + result.city.name + ", " + result.subdivisions.most_specific.name + ", " + result.country.name
+        reprompt_text = None
+    except geoip2.errors.AddressNotFoundError:
+        should_end_session = False
+        speech_output = "Sorry, that address wasn't found in the database. " \
+                        "Please try your command again with a different address."
+        reprompt_text = "Please try your command again with a different address."
+    except ValueError:
+        should_end_session = False
+        speech_output = "Sorry, that doesn't appear to be a valid request. " \
+                        "Please try your command again with a different address."
+        reprompt_text = "Please try your command again with a different address."
+        
     return build_response(session_attributes, build_speechlet_response(
         card_title, speech_output, reprompt_text, should_end_session))
 
@@ -135,8 +151,7 @@ def on_session_ended(session_ended_request, session):
     """
     print("on_session_ended requestId=" + session_ended_request['requestId'] +
           ", sessionId=" + session['sessionId'])
-    # add cleanup logic here
-
+    return handle_session_end_request()
 
 # --------------- Main handler ------------------
 
