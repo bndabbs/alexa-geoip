@@ -1,7 +1,14 @@
+LookupCityIntent {One} dot {Two} dot {Three} dot {Four} is located
+LookupCityIntent Where {One} dot {Two} dot {Three} dot {Four} is located
+LookupCityIntent Where {One} dot {Two} dot {Three} dot {Four} is
 LookupCityIntent What city is {One} dot {Two} dot {Three} dot {Four} in
+LookupCityIntent What city {One} dot {Two} dot {Three} dot {Four} is in
 LookupCityIntent Where is {One} dot {Two} dot {Three} dot {Four} located
 LookupCityIntent Lookup {One} dot {Two} dot {Three} dot {Four}
 LookupCityIntent Where is {One} dot {Two} dot {Three} dot {Four}
 LookupCityIntent Lookup address {One} dot {Two} dot {Three} dot {Four}
 LookupCityIntent Find i p {One} dot {Two} dot {Three} dot {Four}
 LookupCityIntent GeoLocate {One} dot {Two} dot {Three} dot {Four}
+LookupCityIntent Locate {One} dot {Two} dot {Three} dot {Four}
+
+AMAZON.StopIntent Cancel
