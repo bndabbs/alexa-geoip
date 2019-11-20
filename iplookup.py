@@ -5,11 +5,13 @@ This product includes GeoLite2 data created by MaxMind, available from
 http://www.maxmind.com
 """
 
-from __future__ import print_function
+# from __future__ import print_function
 import geoip2.database
+import geoip2.errors
 import ipaddress
 
 # --------------- Helpers that build all of the responses ----------------------
+
 
 def build_speechlet_response(title, output, reprompt_text, should_end_session):
     return {
@@ -62,6 +64,7 @@ def get_welcome_response():
     return build_response(session_attributes, build_speechlet_response(
         card_title, speech_output, reprompt_text, should_end_session))
 
+
 def handle_help_request():
     session_attributes = {}
     card_title = "Help"
@@ -77,12 +80,14 @@ def handle_help_request():
     return build_response(session_attributes, build_speechlet_response(
         card_title, speech_output, reprompt_text, should_end_session))
 
+
 def handle_session_end_request():
     card_title = "Session Ended"
     speech_output = "Goodbye!"
     should_end_session = True
     return build_response({}, build_speechlet_response(
         card_title, speech_output, None, should_end_session))
+
 
 def handle_private_address(ip):
     card_title = ip
@@ -94,6 +99,7 @@ def handle_private_address(ip):
     return build_response(session_attributes, build_speechlet_response(
         card_title, speech_output, reprompt_text, should_end_session))
 
+
 def handle_invalid_address():
     card_title = "Invalid Request"
     session_attributes = {}
@@ -104,6 +110,7 @@ def handle_invalid_address():
     should_end_session = False
     return build_response(session_attributes, build_speechlet_response(
         card_title, speech_output, reprompt_text, should_end_session))
+
 
 def lookup_city(ip):
     reader = geoip2.database.Reader('./GeoLite2-City.mmdb')
@@ -145,6 +152,7 @@ def lookup_city(ip):
 
 # --------------- Events ------------------
 
+
 def on_session_started(session_started_request, session):
     """ Called when the session starts """
 
@@ -177,7 +185,13 @@ def on_intent(intent_request, session):
         intent_slots = intent_request['intent']['slots']
         # Make sure we can parse each slot
         try:
-            ip = ("%s.%s.%s.%s" % (intent_slots['One']['value'], intent_slots['Two']['value'], intent_slots['Three']['value'], intent_slots['Four']['value']))
+            ip = ("%s.%s.%s.%s" % (
+                intent_slots['One']['value'],
+                intent_slots['Two']['value'],
+                intent_slots['Three']['value'],
+                intent_slots['Four']['value']
+                )
+            )
         except KeyError:
             return handle_invalid_address()
         # Make sure the address is valid and not private
@@ -185,9 +199,9 @@ def on_intent(intent_request, session):
             ip_test = ipaddress.IPv4Address(ip)
         except ipaddress.AddressValueError:
             return handle_invalid_address()
-        if ip_test.is_private == False:
+        if not ip_test.is_private:
             return lookup_city(ip)
-        elif ip_test.is_private == True:
+        elif ip_test.is_private:
             return handle_private_address(ip)
     if intent_name == "AMAZON.HelpIntent":
         return handle_help_request()
@@ -207,6 +221,7 @@ def on_session_ended(session_ended_request, session):
     return handle_session_end_request()
 
 # --------------- Main handler ------------------
+
 
 def lambda_handler(event, context):
     """ Route the incoming request based on type (LaunchRequest, IntentRequest,
